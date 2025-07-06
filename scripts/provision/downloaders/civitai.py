@@ -27,7 +27,7 @@ class CivitAIDownloader:
     async def download(
         self, 
         model_name: str, 
-        model_id: str, 
+        version_id: str, 
         target_dir: Path,
         filename: str = ""
     ) -> bool:
@@ -36,7 +36,7 @@ class CivitAIDownloader:
         
         Args:
             model_name: Human-readable model name for logging
-            model_id: CivitAI model version ID
+            version_id: CivitAI model version ID
             target_dir: Directory to save the model
             filename: Optional custom filename (uses CivitAI filename if not provided)
             
@@ -45,11 +45,11 @@ class CivitAIDownloader:
         """
         try:
             self.logger.info(f"📥 Downloading {model_name} from CivitAI")
-            self.logger.info(f"    Model ID: {model_id}")
+            self.logger.info(f"    Version ID: {version_id}")
             self.logger.info(f"    Target: {target_dir}")
             
             # Get model info to determine filename
-            model_info = await self._get_model_info(model_id)
+            model_info = await self._get_model_info(version_id)
             if not model_info:
                 self.logger.error(f"❌ Failed to get model info for {model_name}")
                 return False
@@ -65,7 +65,7 @@ class CivitAIDownloader:
                 return True
             
             # Download the model
-            download_url = f"{self.base_url}/download/models/{model_id}"
+            download_url = f"{self.base_url}/download/models/{version_id}"
             success = await self._download_file(download_url, target_file, model_name)
             
             if success:
@@ -79,10 +79,10 @@ class CivitAIDownloader:
             self.logger.error(f"❌ CivitAI download failed for {model_name}: {e}")
             return False
     
-    async def _get_model_info(self, model_id: str) -> Optional[Dict[str, Any]]:
+    async def _get_model_info(self, version_id: str) -> Optional[Dict[str, Any]]:
         """Get model information from CivitAI API."""
         try:
-            url = f"{self.base_url}/v1/model-versions/{model_id}"
+            url = f"{self.base_url}/v1/model-versions/{version_id}"
             headers = {}
             
             if self.token:
@@ -101,7 +101,7 @@ class CivitAIDownloader:
                         self.logger.error("CivitAI authentication failed - invalid token")
                         return None
                     elif response.status == 404:
-                        self.logger.error(f"Model version {model_id} not found")
+                        self.logger.error(f"Model version {version_id} not found")
                         return None
                     else:
                         self.logger.error(f"CivitAI API error: {response.status}")

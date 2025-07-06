@@ -17,7 +17,7 @@ gated = true
 # CivitAI model (may require CIVITAI_TOKEN)
 [models.lora.detail-tweaker]
 source = "civitai"
-model_id = "58390"
+version_id = "58390"
 filename = "detail_tweaker_xl.safetensors"
 
 # Direct URL with custom headers

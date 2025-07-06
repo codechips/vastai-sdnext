@@ -48,7 +48,7 @@ class ModelConfig:
     source: ModelSource
     target_dir: Path
     repo: Optional[str] = None
-    model_id: Optional[str] = None
+    version_id: Optional[str] = None  # CivitAI version ID (formerly model_id)
     url: Optional[str] = None
     filename: Optional[str] = None
     file: Optional[str] = None  # For HuggingFace specific files
@@ -59,8 +59,8 @@ class ModelConfig:
         """Validate model configuration after initialization."""
         if self.source == ModelSource.HUGGINGFACE and not self.repo:
             raise ConfigurationError(f"HuggingFace models require 'repo' field for {self.name}")
-        elif self.source == ModelSource.CIVITAI and not self.model_id:
-            raise ConfigurationError(f"CivitAI models require 'model_id' field for {self.name}")
+        elif self.source == ModelSource.CIVITAI and not self.version_id:
+            raise ConfigurationError(f"CivitAI models require 'version_id' field for {self.name}")
         elif self.source == ModelSource.DIRECT_URL and not self.url:
             raise ConfigurationError(f"Direct URL models require 'url' field for {self.name}")
 
@@ -69,7 +69,7 @@ class ModelConfigPydantic(BaseModel):
     """Pydantic model for validation of model configurations."""
     source: Optional[str] = None
     repo: Optional[str] = None
-    model_id: Optional[str] = None
+    version_id: Optional[str] = None  # CivitAI version ID (formerly model_id)
     url: Optional[HttpUrl] = None
     filename: Optional[str] = None
     file: Optional[str] = None
@@ -85,7 +85,7 @@ class ModelConfigPydantic(BaseModel):
         # Auto-detect based on available fields
         if 'repo' in values and values['repo']:
             return ModelSource.HUGGINGFACE.value
-        elif 'model_id' in values and values['model_id']:
+        elif 'version_id' in values and values['version_id']:
             return ModelSource.CIVITAI.value
         elif 'url' in values and values['url']:
             return ModelSource.DIRECT_URL.value
@@ -100,12 +100,12 @@ class ModelConfigPydantic(BaseModel):
             raise ValueError('repo required for HuggingFace models')
         return v
     
-    @validator('model_id')
-    def validate_model_id(cls, v, values):
-        """Validate model_id for CivitAI models."""
+    @validator('version_id')
+    def validate_version_id(cls, v, values):
+        """Validate version_id for CivitAI models."""
         source = values.get('source')
         if source == ModelSource.CIVITAI.value and not v:
-            raise ValueError('model_id required for CivitAI models')
+            raise ValueError('version_id required for CivitAI models')
         return v
     
     @validator('url')

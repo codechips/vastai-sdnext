@@ -20,19 +20,19 @@ gated = true
 [models.checkpoints.realistic-vision]
 # https://civitai.com/models/4201/realistic-vision-v60-b1
 source = "civitai"
-model_id = "501240"
+version_id = "501240"
 filename = "realisticVisionV60B1_v51VAE.safetensors"
 
 # LoRA models
 [models.lora.rembrandt]
 # https://civitai.com/models/280454/rembrandt-low-key-lighting-style-xl-sd15-f1d-illu-pony
 source = "civitai"
-model_id = "804774"
+version_id = "804774"
 
 [models.lora.split-lighting]
 # https://civitai.com/models/381965/split-lighting-style-shadow-light-xl-f1d-illu-pony
 source = "civitai"
-model_id = "1374634"
+version_id = "1374634"
 
 # VAE models
 [models.vae.sdxl-vae]

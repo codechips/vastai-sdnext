@@ -137,7 +137,7 @@ class TokenValidator:
         if platform == "huggingface":
             return await self._check_hf_repo_access(repo_id)
         elif platform == "civitai":
-            return await self._check_civitai_model_access(repo_id)
+            return await self._check_civitai_version_access(repo_id)
         else:
             self.logger.error(f"Unknown platform: {platform}")
             return False
@@ -174,13 +174,13 @@ class TokenValidator:
             self.logger.error(f"Error checking HF repo access: {e}")
             return False
 
-    async def _check_civitai_model_access(self, model_id: str) -> bool:
-        """Check access to a CivitAI model."""
+    async def _check_civitai_version_access(self, version_id: str) -> bool:
+        """Check access to a CivitAI model version."""
         if not self.civitai_token:
             return False
 
         try:
-            url = f"https://civitai.com/api/v1/model-versions/{model_id}"
+            url = f"https://civitai.com/api/v1/model-versions/{version_id}"
             headers = {
                 "Authorization": f"Bearer {self.civitai_token}",
                 "Content-Type": "application/json",
@@ -191,19 +191,19 @@ class TokenValidator:
                     if response.status == 200:
                         return True
                     elif response.status == 404:
-                        self.logger.warning(f"Model {model_id} not found")
+                        self.logger.warning(f"Model version {version_id} not found")
                         return False
                     elif response.status == 403:
-                        self.logger.warning(f"Access denied to model {model_id}")
+                        self.logger.warning(f"Access denied to model version {version_id}")
                         return False
                     else:
                         self.logger.warning(
-                            f"Unexpected status {response.status} for model {model_id}"
+                            f"Unexpected status {response.status} for model version {version_id}"
                         )
                         return False
 
         except Exception as e:
-            self.logger.error(f"Error checking CivitAI model access: {e}")
+            self.logger.error(f"Error checking CivitAI model version access: {e}")
             return False
 
     def get_token_status(self) -> Dict[str, Optional[str]]:

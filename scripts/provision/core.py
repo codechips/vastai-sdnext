@@ -206,7 +206,7 @@ class ProvisioningSystem:
         """Log clear error message for inaccessible gated model."""
         self.logger.error("🔒 GATED MODEL ACCESS DENIED")
         self.logger.error(
-            f"Model: {model.get('repo', model.get('model_id', 'unknown'))}"
+            f"Model: {model.get('repo', model.get('version_id', 'unknown'))}"
         )
         self.logger.error(f"Platform: {platform}")
         self.logger.error("Reason: Terms of Service not accepted or invalid token")
@@ -286,7 +286,7 @@ class ProvisioningSystem:
                         source=source,
                         target_dir=target_dir,
                         repo=model_config_data.repo,
-                        model_id=model_config_data.model_id,
+                        version_id=model_config_data.version_id,
                         url=str(model_config_data.url) if model_config_data.url else None,
                         filename=model_config_data.filename,
                         file=model_config_data.file,
@@ -415,7 +415,7 @@ class ProvisioningSystem:
         try:
             success = await self.civitai_downloader.download(
                 model_name=model_config.name,
-                model_id=model_config.model_id,
+                version_id=model_config.version_id,
                 target_dir=model_config.target_dir,
                 filename=model_config.filename or "",
             )
@@ -498,7 +498,7 @@ class ProvisioningSystem:
         """Auto-detect source from model configuration."""
         if "repo" in model_config:
             return "huggingface"
-        elif "model_id" in model_config:
+        elif "version_id" in model_config:
             return "civitai"
         elif "url" in model_config:
             return "url"
@@ -528,7 +528,7 @@ class ProvisioningSystem:
         try:
             return await self.civitai_downloader.download(
                 model_name=model_name,
-                model_id=config["model_id"],
+                version_id=config["version_id"],
                 target_dir=target_dir,
                 filename=config.get("filename", ""),
             )

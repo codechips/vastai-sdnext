@@ -189,7 +189,7 @@ class ConfigParser:
         """Auto-detect source type from configuration."""
         if "repo" in model_config:
             return "huggingface"
-        elif "model_id" in model_config:
+        elif "version_id" in model_config:
             return "civitai"
         elif "url" in model_config:
             return "url"
@@ -215,19 +215,19 @@ class ConfigParser:
 
     def _validate_civitai_config(self, model_name: str, config: Dict[str, Any]) -> None:
         """Validate CivitAI model configuration."""
-        if "model_id" not in config:
+        if "version_id" not in config:
             raise Exception(
-                f"CivitAI model '{model_name}' missing required 'model_id' field"
+                f"CivitAI model '{model_name}' missing required 'version_id' field"
             )
 
-        model_id = config["model_id"]
-        if not isinstance(model_id, (str, int)):
+        version_id = config["version_id"]
+        if not isinstance(version_id, (str, int)):
             raise Exception(
-                f"CivitAI model '{model_name}' 'model_id' must be string or integer"
+                f"CivitAI model '{model_name}' 'version_id' must be string or integer"
             )
 
         # Convert to string for consistency
-        config["model_id"] = str(model_id)
+        config["version_id"] = str(version_id)
 
     def _validate_url_config(self, model_name: str, config: Dict[str, Any]) -> None:
         """Validate direct URL model configuration."""

@@ -22,7 +22,7 @@ gated = true
 # CivitAI model
 [models.checkpoints.realistic-vision]
 source = "civitai"
-model_id = "130072"
+version_id = "130072"
 filename = "realisticVisionV60B1_v51VAE.safetensors"
 
 # Direct URL examples
@@ -40,7 +40,7 @@ filename = "gdrive-model.safetensors"
 # LoRA models
 [models.lora.style-lora]
 source = "civitai"
-model_id = "87153"
+version_id = "87153"
 
 # Simple URL format
 [models.lora]

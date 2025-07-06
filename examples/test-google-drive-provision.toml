@@ -8,7 +8,7 @@ filename = "test-model.safetensors"
 
 [models.lora.example-lora]
 source = "civitai"
-model_id = "58390"
+version_id = "58390"
 filename = "detail_tweaker_xl.safetensors"
 
 [models.vae.sdxl-vae]
