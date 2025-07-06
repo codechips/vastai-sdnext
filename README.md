@@ -77,6 +77,17 @@ docker run -d \
 - Troubleshooting tips
 - Example configurations
 
+## Automated Updates
+
+The Docker image is automatically built and updated:
+
+- **Push Builds**: New image built immediately when changes are pushed to main branch
+- **Weekly Builds**: Every Sunday at 2 AM UTC to catch upstream SD.Next updates
+- **Version Management**: Always maintains exactly 3 most recent versions
+- **Tags**: `latest` (current), `YYYYMMDD` (date-based), `YYYY-WUU` (weekly builds)
+
+This ensures your image stays current with both repository changes and upstream SD.Next improvements.
+
 ## Performance Optimization
 
 ### Accelerate Support (Enabled by Default)
@@ -151,7 +162,9 @@ vastai-sdnext/
 │   └── test-provision-full.toml   # Full feature example
 ├── docs/                          # Documentation
 ├── test_provision_local.sh        # Local testing script
-├── .github/workflows/             # CI/CD workflows
+├── .github/workflows/             # Simplified CI/CD workflows
+│   ├── weekly-build.yml           # Main build & cleanup workflow
+│   └── delete-package-versions.yml # Reusable cleanup component
 └── .mise.toml                     # Task runner configuration
 ```
 
