@@ -1,0 +1,50 @@
+# FLUX model provisioning configuration
+# Includes FLUX.1-dev model and required text encoders
+
+# FLUX.1-dev main model (requires HF_TOKEN and terms acceptance)
+[models.checkpoints.flux-dev]
+source = "huggingface"
+repo = "black-forest-labs/FLUX.1-dev"
+file = "flux1-dev.safetensors"
+gated = true
+
+# FLUX.1-dev NF4 quantized model (recommended for 6-8GB VRAM, faster inference)
+[models.checkpoints.flux-dev-nf4]
+source = "huggingface"
+repo = "lllyasviel/flux1-dev-bnb-nf4"
+file = "flux1-dev-bnb-nf4-v2.safetensors"
+gated = true
+
+# Required CLIP text encoder for FLUX
+[models.text_encoder.clip_l]
+source = "huggingface"
+repo = "comfyanonymous/flux_text_encoders"
+file = "clip_l.safetensors"
+
+# Required T5 text encoder for FLUX (FP8 quantized - smaller size)
+[models.text_encoder.t5xxl_fp8]
+source = "huggingface"
+repo = "comfyanonymous/flux_text_encoders"
+file = "t5xxl_fp8_e4m3fn.safetensors"
+
+# Optional: T5 other variants
+# [models.text_encoder.t5xxl_fp16]
+# source = "huggingface"
+# repo = "comfyanonymous/flux_text_encoders"
+# file = "t5xxl_fp16.safetensors"  # 9.79 GB - highest quality
+#
+# [models.text_encoder.t5xxl_fp8_scaled]
+# source = "huggingface"
+# repo = "comfyanonymous/flux_text_encoders"
+# file = "t5xxl_fp8_e4m3fn_scaled.safetensors"  # 5.16 GB - scaled FP8
+#
+# [models.text_encoder.openclip_vit_l14]
+# source = "huggingface"
+# repo = "zer0int/CLIP-GmP-ViT-L-14"
+# file = "ViT-L-14-BEST-smooth-GmP-HF-format.safetensors"  # 931 MB - OpenCLIP ViT-L/14
+
+# FLUX VAE
+[models.vae.flux-vae]
+source = "huggingface"
+repo = "black-forest-labs/FLUX.1-dev"
+file = "ae.safetensors"

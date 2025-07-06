@@ -1,0 +1,14 @@
+# Minimal test configuration for provisioning system
+# Uses only small, public files that don't require authentication
+
+[models.checkpoints.tiny-test]
+# Tiny test model from HuggingFace (1KB file)
+source = "huggingface"
+repo = "hf-internal-testing/tiny-random-BertModel"
+file = "config.json"
+
+[models.lora.test-file]
+# GitHub raw file (small)
+source = "url"
+url = "https://raw.githubusercontent.com/huggingface/huggingface_hub/main/README.md"
+filename = "test-readme.md"

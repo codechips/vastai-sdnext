@@ -1,0 +1,53 @@
+# HuggingFace models
+[models.checkpoints.sdxl-base]
+source = "huggingface"
+repo = "stabilityai/stable-diffusion-xl-base-1.0"
+file = "sd_xl_base_1.0.safetensors"
+
+[models.checkpoints.sdxl-refiner]
+source = "huggingface"
+repo = "stabilityai/stable-diffusion-xl-refiner-0.9"
+file = "sd_xl_refiner_0.9.safetensors"
+
+# Gated model (requires HF token and TOS acceptance)
+[models.checkpoints.flux-dev]
+source = "huggingface"
+repo = "black-forest-labs/FLUX.1-dev"
+file = "flux1-dev.safetensors"
+gated = true
+
+# CivitAI model
+[models.checkpoints.realistic-vision]
+# https://civitai.com/models/4201/realistic-vision-v60-b1
+source = "civitai"
+model_id = "501240"
+filename = "realisticVisionV60B1_v51VAE.safetensors"
+
+# LoRA models
+[models.lora.rembrandt]
+# https://civitai.com/models/280454/rembrandt-low-key-lighting-style-xl-sd15-f1d-illu-pony
+source = "civitai"
+model_id = "804774"
+
+[models.lora.split-lighting]
+# https://civitai.com/models/381965/split-lighting-style-shadow-light-xl-f1d-illu-pony
+source = "civitai"
+model_id = "1374634"
+
+# VAE models
+[models.vae.sdxl-vae]
+source = "huggingface"
+repo = "stabilityai/sdxl-vae"
+file = "sdxl_vae.safetensors"
+
+# ControlNet models
+[models.controlnet.canny-xl]
+source = "huggingface"
+repo = "lllyasviel/sd_control_collection"
+file = "diffusers_xl_canny_mid.safetensors"
+
+# Upscaling models
+[models.esrgan.real-esrgan]
+source = "url"
+url = "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth"
+filename = "RealESRGAN_x4plus.pth"

@@ -1,0 +1,17 @@
+# Example provision config demonstrating Google Drive URL support
+# This config can be hosted on Google Drive and referenced via PROVISION_URL
+
+[models.checkpoints.test-model]
+source = "url"
+url = "https://drive.google.com/file/d/1BVKTren_EE6T1QZN6aKPQA_3fOT4Xj2n/view?usp=sharing"
+filename = "test-model.safetensors"
+
+[models.lora.example-lora]
+source = "civitai"
+model_id = "58390"
+filename = "detail_tweaker_xl.safetensors"
+
+[models.vae.sdxl-vae]
+source = "huggingface"
+repo = "stabilityai/sdxl-vae"
+file = "sdxl_vae.safetensors"

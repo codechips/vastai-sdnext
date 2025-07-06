@@ -1,0 +1,7 @@
+# Simplest possible test configuration
+
+[models.checkpoints]
+tiny-test = { source = "huggingface", repo = "hf-internal-testing/tiny-random-BertModel", file = "config.json" }
+
+[models.lora]
+test-file = { source = "url", url = "https://raw.githubusercontent.com/huggingface/huggingface_hub/main/README.md", filename = "test-readme.md" }

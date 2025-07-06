@@ -1,0 +1,72 @@
+# VastAI Forge Provisioning Configuration Example
+# This file demonstrates how to configure model downloads from multiple sources
+
+# HuggingFace models
+[models.checkpoints.sdxl-base]
+source = "huggingface"
+repo = "stabilityai/stable-diffusion-xl-base-1.0"
+file = "sd_xl_base_1.0.safetensors"
+
+[models.checkpoints.sdxl-refiner]
+source = "huggingface"
+repo = "stabilityai/stable-diffusion-xl-refiner-1.0"
+file = "sd_xl_refiner_1.0.safetensors"
+
+# Gated model (requires HF token and TOS acceptance)
+[models.checkpoints.flux-dev]
+source = "huggingface"
+repo = "black-forest-labs/FLUX.1-dev"
+file = "flux1-dev.safetensors"
+gated = true
+
+# CivitAI model
+[models.checkpoints.realistic-vision]
+source = "civitai"
+model_id = "130072"
+filename = "realisticVisionV60B1_v51VAE.safetensors"
+
+# Direct URL examples
+[models.checkpoints.custom-model]
+source = "url"
+url = "https://example.com/models/custom-model.safetensors"
+filename = "custom-model.safetensors"
+
+# Google Drive URL (will be automatically converted to direct download)
+[models.checkpoints.gdrive-model]
+source = "url"
+url = "https://drive.google.com/file/d/1ABC123DEF456/view"
+filename = "gdrive-model.safetensors"
+
+# LoRA models
+[models.lora.style-lora]
+source = "civitai"
+model_id = "87153"
+
+# Simple URL format
+[models.lora]
+another-lora = "https://example.com/loras/style.safetensors"
+
+# VAE models
+[models.vae.sdxl-vae]
+source = "huggingface"
+repo = "stabilityai/sdxl-vae"
+file = "sdxl_vae.safetensors"
+
+# ControlNet models
+[models.controlnet.canny-xl]
+source = "huggingface"
+repo = "lllyasviel/sd_control_collection"
+file = "diffusers_xl_canny_mid.safetensors"
+
+# Upscaling models
+[models.esrgan.real-esrgan]
+source = "url"
+url = "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth"
+filename = "RealESRGAN_x4plus.pth"
+
+# S3 example with authentication
+[models.esrgan.s3-model]
+source = "url"
+url = "https://my-bucket.s3.amazonaws.com/models/upscaler.pth"
+auth_header = "Bearer ${S3_TOKEN}"
+filename = "s3-upscaler.pth"

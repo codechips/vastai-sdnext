@@ -1,0 +1,69 @@
+# Full test configuration demonstrating all features
+# Requires HF_TOKEN and CIVITAI_TOKEN for some models
+
+# SDXL Base (6.46GB - public model, no auth required)
+[models.checkpoints.sdxl-base]
+source = "huggingface"
+repo = "stabilityai/stable-diffusion-xl-base-1.0"
+file = "sd_xl_base_1.0.safetensors"
+
+# Gated model example (requires HF_TOKEN and TOS acceptance)
+[models.checkpoints.flux-dev]
+source = "huggingface"
+repo = "black-forest-labs/FLUX.1-dev"
+file = "flux1-dev.safetensors"
+gated = true
+
+# CivitAI model (may require CIVITAI_TOKEN)
+[models.lora.detail-tweaker]
+source = "civitai"
+model_id = "58390"
+filename = "detail_tweaker_xl.safetensors"
+
+# Direct URL with custom headers
+[models.lora.custom-lora]
+source = "url"
+url = "https://example.com/models/custom.safetensors"
+headers = { "User-Agent" = "VastAI-Forge/1.0" }
+
+# SDXL VAE
+[models.vae.sdxl-vae]
+source = "huggingface"
+repo = "stabilityai/sdxl-vae"
+file = "sdxl_vae.safetensors"
+
+# FLUX VAE (required for FLUX models)
+[models.vae.flux-vae]
+source = "huggingface"
+repo = "black-forest-labs/FLUX.1-dev"
+file = "ae.safetensors"
+
+# ControlNet Canny for SDXL
+[models.controlnet.canny-xl]
+source = "huggingface"
+repo = "diffusers/controlnet-canny-sdxl-1.0"
+file = "diffusion_pytorch_model.fp16.safetensors"
+
+# Real-ESRGAN upscaler
+[models.esrgan.realesrgan-x4]
+source = "url"
+url = "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth"
+filename = "RealESRGAN_x4plus.pth"
+
+# CLIP text encoder for FLUX models
+[models.text_encoder.clip_l]
+source = "huggingface"
+repo = "comfyanonymous/flux_text_encoders"
+file = "clip_l.safetensors"
+
+# T5 text encoder for FLUX models (FP8 quantized - smaller size)
+[models.text_encoder.t5xxl_fp8]
+source = "huggingface"
+repo = "comfyanonymous/flux_text_encoders"
+file = "t5xxl_fp8_e4m3fn.safetensors"
+
+# OpenCLIP ViT-L/14 model for advanced CLIP functionality
+[models.text_encoder.openclip_vit_l14]
+source = "huggingface"
+repo = "zer0int/CLIP-GmP-ViT-L-14"
+file = "ViT-L-14-BEST-smooth-GmP-HF-format.safetensors"
