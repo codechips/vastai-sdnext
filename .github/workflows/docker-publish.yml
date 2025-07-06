@@ -19,6 +19,7 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     
     steps:
     - name: Check out the repository's code
@@ -30,6 +31,9 @@ jobs:
       
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
+      with:
+        driver-opts: |
+          image=moby/buildkit:latest
       
     - name: Log in to the GitHub Container Registry
       uses: docker/login-action@v3
@@ -58,7 +62,7 @@ jobs:
       with:
         context: .
         file: ./Dockerfile
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64
         push: true
         cache-from: type=gha
         cache-to: type=gha,mode=max
@@ -66,6 +70,13 @@ jobs:
           SDNEXT_VERSION=main
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        provenance: false
+        
+    - name: Test image
+      if: success()
+      run: |
+        echo "🧪 Testing built image..."
+        docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest echo "Image test successful"
         
     - name: Create build summary
       run: |
@@ -76,4 +87,21 @@ jobs:
         echo "${{ steps.meta.outputs.tags }}" | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-        echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Branch**: ${{ github.ref_name }}"
+        echo "**Platform**: linux/amd64 only (ARM64 support coming later)"
+        echo "**Build Time**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+        echo "**Commit SHA**: ${{ github.sha }}"
+        
+    - name: Report failure
+      if: failure()
+      run: |
+        echo "## ❌ Docker Build Failed" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Error**: Build process failed" >> $GITHUB_STEP_SUMMARY
+        echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Time**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Common Solutions**:" >> $GITHUB_STEP_SUMMARY
+        echo "- Check Dockerfile syntax" >> $GITHUB_STEP_SUMMARY
+        echo "- Verify base image availability" >> $GITHUB_STEP_SUMMARY
+        echo "- Review recent changes" >> $GITHUB_STEP_SUMMARY >> $GITHUB_STEP_SUMMARY
