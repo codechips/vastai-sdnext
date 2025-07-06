@@ -82,7 +82,7 @@ jobs:
       if: success()
       run: |
         echo "🧪 Testing built image..."
-        docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest echo "Image test successful"
+        docker run --rm --entrypoint="" ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest echo "Image test successful"
 
     - name: Clean up old versions
       if: success()
