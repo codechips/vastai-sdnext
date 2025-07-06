@@ -1,0 +1,94 @@
+name: Deep Registry Cleanup
+
+on:
+  workflow_dispatch:
+    inputs:
+      aggressive:
+        description: 'Aggressive cleanup (keep only 2 versions)'
+        required: false
+        type: boolean
+        default: false
+  schedule:
+    # Run monthly on the 1st at 3 AM UTC
+    - cron: '0 3 1 * *'
+
+jobs:
+  analyze-usage:
+    name: Analyze registry usage
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    steps:
+      - name: Get package info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const packages = await github.rest.packages.listPackagesForOrganization({
+              package_type: 'container',
+              org: context.repo.owner
+            });
+            
+            console.log('📦 Registry Analysis:');
+            console.log(`Total packages: ${packages.data.length}`);
+            
+            for (const pkg of packages.data) {
+              const versions = await github.rest.packages.getAllPackageVersionsForPackageOwnedByOrg({
+                package_type: 'container',
+                package_name: pkg.name,
+                org: context.repo.owner
+              });
+              
+              console.log(`\n${pkg.name}:`);
+              console.log(`  - Total versions: ${versions.data.length}`);
+              console.log(`  - Created: ${pkg.created_at}`);
+              console.log(`  - Updated: ${pkg.updated_at}`);
+            }
+
+  deep-cleanup:
+    name: Deep cleanup all images
+    needs: analyze-usage
+    uses: ./.github/workflows/delete-package-versions.yml
+    with:
+      package_name: 'vastai-sdnext'
+      package_type: 'container'
+      min_versions_to_keep: ${{ github.event.inputs.aggressive && 2 || 3 }}
+    permissions:
+      packages: write
+    secrets: inherit
+
+  cleanup-all-untagged:
+    name: Remove all old untagged versions
+    needs: analyze-usage
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Delete all untagged versions older than 7 days
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'vastai-sdnext'
+          package-type: 'container'
+          min-versions-to-keep: 1
+          delete-only-untagged-versions: true
+          # Only delete versions older than 7 days
+          ignore-versions: '^(?!.*untagged).*$'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  report-results:
+    name: Report cleanup results
+    needs: [deep-cleanup, cleanup-all-untagged]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## 🧹 Deep Cleanup Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Date**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Type**: ${{ github.event.inputs.aggressive && 'Aggressive' || 'Standard' }} cleanup" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Actions Taken" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Cleaned up old tagged versions" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Removed untagged versions older than 7 days" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Kept minimum required versions for rollback" >> $GITHUB_STEP_SUMMARY

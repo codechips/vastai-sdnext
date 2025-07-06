@@ -1,7 +1,7 @@
 # GitHub Actions workflow for automated Docker image building and publishing
 # Builds and pushes Docker images to GitHub Container Registry on main branch pushes
 
-name: Docker Build and Publish
+name: Docker Publish
 
 on:
   push:
@@ -45,7 +45,13 @@ jobs:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
           type=raw,value=latest
-          type=raw,value=${{ steps.sha.outputs.short }}
+          type=sha,prefix={{date 'YYYYMMDD'}}-
+          type=ref,event=branch
+          type=raw,value={{date 'YYYYMMDD'}}
+        labels: |
+          org.opencontainers.image.title=VastAI SD.Next
+          org.opencontainers.image.description=SD.Next Docker image for Vast.ai with automated provisioning
+          org.opencontainers.image.vendor=codechips
           
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
@@ -60,3 +66,14 @@ jobs:
           SDNEXT_VERSION=main
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        
+    - name: Create build summary
+      run: |
+        echo "## 🐳 Docker Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Image**: `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}`" >> $GITHUB_STEP_SUMMARY
+        echo "**Tags**:" >> $GITHUB_STEP_SUMMARY
+        echo "${{ steps.meta.outputs.tags }}" | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY

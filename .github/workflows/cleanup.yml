@@ -1,39 +1,34 @@
-# Cleanup workflow for managing Docker registry storage
-name: Delete Container Versions
+name: Cleanup Docker Images
 
 on:
-  schedule:
-    # Run weekly on Sundays at 02:00 UTC
-    - cron: '0 2 * * 0'
   workflow_dispatch:
-  workflow_call:
-    inputs:
-      package_name:
-        required: true
-        type: string
-      package_type:
-        required: true
-        type: string
-      min_versions_to_keep:
-        required: false
-        type: number
-        default: 5
-      delete_untagged:
-        required: false
-        type: boolean
-        default: true
+  schedule:
+    - cron: '0 2 * * 0'  # Weekly on Sunday at 2 AM UTC
+  workflow_run:
+    workflows: ["Docker Publish"]
+    types:
+      - completed
 
 jobs:
-  delete_versions:
-    runs-on: ubuntu-latest
+  cleanup-main:
+    name: Cleanup main SD.Next image
+    uses: ./.github/workflows/delete-package-versions.yml
+    with:
+      package_name: 'vastai-sdnext'
+      package_type: 'container'
+      min_versions_to_keep: 5  # Keep last 5 versions
     permissions:
       packages: write
-    steps:
-      - name: Delete old container versions
-        uses: actions/delete-package-versions@v4.1.1
-        with:
-          delete-only-untagged-versions: ${{ inputs.delete_untagged || true }}
-          min-versions-to-keep: ${{ inputs.min_versions_to_keep || 5 }}
-          package-name: ${{ inputs.package_name || 'codechips/vastai-sdnext' }}
-          package-type: ${{ inputs.package_type || 'container' }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+    secrets: inherit
+
+  cleanup-untagged:
+    name: Cleanup untagged versions
+    uses: ./.github/workflows/delete-package-versions.yml
+    with:
+      package_name: 'vastai-sdnext'
+      package_type: 'container'
+      min_versions_to_keep: 2  # Keep fewer untagged versions
+      delete_untagged_only: true
+    permissions:
+      packages: write
+    secrets: inherit

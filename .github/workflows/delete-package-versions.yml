@@ -1,0 +1,45 @@
+name: Delete Container Versions
+
+on:
+  workflow_call:
+    inputs:
+      package_name:
+        required: true
+        type: string
+        description: 'The name of the package to clean up'
+      package_type:
+        required: true
+        type: string
+        description: 'The type of package (container, npm, etc.)'
+      min_versions_to_keep:
+        required: false
+        type: number
+        default: 5
+        description: 'Minimum number of versions to keep'
+      delete_untagged_only:
+        required: false
+        type: boolean
+        default: false
+        description: 'Only delete untagged versions'
+
+jobs:
+  delete_versions:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Delete old container versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ inputs.package_name }}
+          package-type: ${{ inputs.package_type }}
+          min-versions-to-keep: ${{ inputs.min_versions_to_keep }}
+          delete-only-untagged-versions: ${{ inputs.delete_untagged_only }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Log cleanup results
+        run: |
+          echo "✅ Cleanup completed for ${{ inputs.package_name }}"
+          echo "   - Package type: ${{ inputs.package_type }}"
+          echo "   - Min versions kept: ${{ inputs.min_versions_to_keep }}"
+          echo "   - Delete untagged only: ${{ inputs.delete_untagged_only }}"
