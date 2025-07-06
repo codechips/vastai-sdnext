@@ -54,7 +54,7 @@ jobs:
           type=raw,value={{date 'YYYYMMDD'}}
         labels: |
           org.opencontainers.image.title=VastAI SD.Next
-          org.opencontainers.image.description=SD.Next Docker image for Vast.ai with automated provisioning
+          org.opencontainers.image.description=SD.Next Docker image for Vast.ai with automated provisioning (linux/amd64)
           org.opencontainers.image.vendor=codechips
           
     - name: Build and push Docker image
@@ -88,7 +88,7 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
         echo "**Branch**: ${{ github.ref_name }}"
-        echo "**Platform**: linux/amd64 only (ARM64 support coming later)"
+        echo "**Platform**: linux/amd64"
         echo "**Build Time**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
         echo "**Commit SHA**: ${{ github.sha }}"
         

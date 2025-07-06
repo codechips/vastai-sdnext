@@ -47,14 +47,9 @@ RUN apt-get update && \
     && /usr/sbin/ldconfig
 
 
-# Install ttyd and logdy (architecture-aware)
-RUN if [ "$(uname -m)" = "x86_64" ]; then \
-        curl -L --progress-bar https://github.com/tsl0922/ttyd/releases/download/1.7.4/ttyd.x86_64 -o /usr/local/bin/ttyd && \
-        curl -L --progress-bar https://github.com/logdyhq/logdy-core/releases/download/v0.13.0/logdy_linux_amd64 -o /usr/local/bin/logdy; \
-    else \
-        curl -L --progress-bar https://github.com/tsl0922/ttyd/releases/download/1.7.4/ttyd.aarch64 -o /usr/local/bin/ttyd && \
-        curl -L --progress-bar https://github.com/logdyhq/logdy-core/releases/download/v0.13.0/logdy_linux_arm64 -o /usr/local/bin/logdy; \
-    fi && \
+# Install ttyd and logdy (x86_64 only)
+RUN curl -L --progress-bar https://github.com/tsl0922/ttyd/releases/download/1.7.4/ttyd.x86_64 -o /usr/local/bin/ttyd && \
+    curl -L --progress-bar https://github.com/logdyhq/logdy-core/releases/download/v0.13.0/logdy_linux_amd64 -o /usr/local/bin/logdy && \
     chmod +x /usr/local/bin/ttyd /usr/local/bin/logdy
 
 # Install filebrowser and set up directories

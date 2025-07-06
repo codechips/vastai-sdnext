@@ -240,7 +240,7 @@ All logs are easily searchable through the logdy web interface.
 - **Python**: 3.10
 - **GPU**: NVIDIA GPUs with CUDA support
 - **Platform**: Vast.ai, local Docker environments
-- **Architecture**: x86_64 and ARM64
+- **Architecture**: x86_64 (AMD64)
 
 
 ## Useful links
