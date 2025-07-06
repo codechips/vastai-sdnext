@@ -69,7 +69,7 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
         build-args: |
-          SDNEXT_VERSION=main
+          SDNEXT_VERSION=master
         tags: ${{ steps.meta.outputs.tags }}
         labels: |
           org.opencontainers.image.title=VastAI SD.Next

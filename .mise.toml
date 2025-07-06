@@ -150,7 +150,7 @@ run = [
     "echo '🔥 Building SD.Next with specific version for caching...'",
     "echo 'Specify SDNEXT_VERSION=branch or tag for caching'",
     "docker buildx create --use --name cross-builder --driver docker-container --driver-opt network=host || true",
-    "docker buildx build --platform linux/amd64 --progress=plain --load --build-arg SDNEXT_VERSION=${SDNEXT_VERSION:-main} -t ghcr.io/codechips/vastai-sdnext:latest .",
+    "docker buildx build --platform linux/amd64 --progress=plain --load --build-arg SDNEXT_VERSION=${SDNEXT_VERSION:-master} -t ghcr.io/codechips/vastai-sdnext:latest .",
     "echo '✅ Cached SD.Next build completed!'",
     "command -v afplay >/dev/null && afplay /System/Library/Sounds/Glass.aiff || echo '🔔'"
 ]

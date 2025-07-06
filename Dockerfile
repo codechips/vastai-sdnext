@@ -56,12 +56,15 @@ RUN curl -L --progress-bar https://github.com/tsl0922/ttyd/releases/download/1.7
 RUN curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash && \
     mkdir -p /workspace/logs /opt/sdnext /root/.config
 
-# Clone SD.Next (version-dependent layer)
+# Clone SD.Next and fetch latest changes
 WORKDIR /opt
 RUN git clone https://github.com/vladmandic/sdnext.git sdnext
 
 WORKDIR /opt/sdnext
-RUN git checkout ${SDNEXT_VERSION}
+# Always fetch latest changes and checkout the specified version (defaults to master)
+RUN git fetch origin && \
+    git checkout ${SDNEXT_VERSION} && \
+    git pull origin ${SDNEXT_VERSION}
 
 # Create Python environment with uv and install SD.Next
 # hadolint ignore=SC2015
