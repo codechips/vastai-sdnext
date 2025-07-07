@@ -5,18 +5,34 @@ function start_filebrowser() {
     echo "filebrowser: starting"
     cd /root
 
-    # Update password if provided
-    if [[ ${PASSWORD} ]] && [[ ${PASSWORD} != "admin123" ]]; then
-        echo "filebrowser: updating admin password"
-        if /usr/local/bin/filebrowser users update admin -p ${PASSWORD}; then
-            echo "filebrowser: password updated successfully"
-        else
-            echo "filebrowser: ERROR - Failed to update password. Check if password meets requirements:"
-            echo "filebrowser: - Must be at least 5 characters long"
-            echo "filebrowser: - Must not be a common password (like 'password', '123456', etc.)"
-            echo "filebrowser: - Keeping default password 'admin123'"
-        fi
+    # Remove existing database to ensure clean initialization
+    rm -f /root/filebrowser.db
+
+    # Initialize database and create admin user
+    echo "filebrowser: initializing database"
+    if ! /usr/local/bin/filebrowser config init --minimum-password-length 5; then
+        echo "filebrowser: ERROR - Failed to initialize database"
+        return 1
     fi
+    
+    # Set the password to use (default to admin123 if not provided)
+    ADMIN_PASSWORD="${PASSWORD:-admin123}"
+    
+    # Validate password length (minimum 5 characters as per config)
+    if [[ ${#ADMIN_PASSWORD} -lt 5 ]]; then
+        echo "filebrowser: ERROR - Password must be at least 5 characters long"
+        echo "filebrowser: Using default password 'admin123'"
+        ADMIN_PASSWORD="admin123"
+    fi
+    
+    # Create admin user with the specified password
+    echo "filebrowser: creating admin user"
+    if ! /usr/local/bin/filebrowser users add admin "${ADMIN_PASSWORD}" --perm.admin; then
+        echo "filebrowser: ERROR - Failed to create admin user"
+        return 1
+    fi
+    
+    echo "filebrowser: admin user created successfully"
 
     # Start filebrowser in background
     nohup /usr/local/bin/filebrowser >"${WORKSPACE}/logs/filebrowser.log" 2>&1 &

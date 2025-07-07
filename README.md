@@ -53,6 +53,30 @@ Simplified single Docker image for running SD.Next (Stable Diffusion Next) on Va
 - Username: `admin`
 - Password: `admin`
 
+## Environment Variables
+
+### Core Configuration
+- `USERNAME`: Username for all services (default: `admin`)
+- `PASSWORD`: Password for all services (default: `admin`)
+- `OPEN_BUTTON_PORT`: Port for Vast.ai's "Open" button (default: `8010`)
+
+### SD.Next Configuration
+- `SDNEXT_ARGS`: Additional arguments for SD.Next (default: empty)
+- `NO_ACCELERATE`: Disable HuggingFace Accelerate optimization (default: empty/false)
+
+### ttyd Terminal Configuration
+- `ENABLE_TTYD`: Enable/disable web terminal service (default: `true`)
+- `TTYD_START_DIR`: Directory where terminal starts (default: `${WORKSPACE}`)
+
+### Model Provisioning
+- `PROVISION_URL`: URL to TOML configuration file for model provisioning
+- `HF_TOKEN`: HuggingFace token for private model access
+- `CIVITAI_TOKEN`: CivitAI token for model downloads
+
+### Advanced Options
+- `NO_TCMALLOC`: Disable TCMalloc memory optimization (default: empty/false)
+- `LD_PRELOAD`: Custom memory allocator (default: `libtcmalloc.so.4`)
+
 ## Model Provisioning
 
 📋 **Complete provisioning documentation has been moved to [PROVISION.md](PROVISION.md)**

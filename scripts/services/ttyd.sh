@@ -2,6 +2,14 @@
 # TTYd web terminal service
 
 function start_ttyd() {
+    # Check if TTYd is enabled (default: true)
+    ENABLE_TTYD="${ENABLE_TTYD:-true}"
+    
+    if [[ "${ENABLE_TTYD}" != "true" ]]; then
+        echo "ttyd: disabled via ENABLE_TTYD environment variable"
+        return
+    fi
+
     echo "ttyd: starting web terminal"
 
     # Set up basic auth if password is provided
@@ -11,13 +19,15 @@ function start_ttyd() {
         AUTH_ARGS=""
     fi
 
+    # Set start directory (configurable via TTYD_START_DIR, defaults to $WORKSPACE)
+    TTYD_START_DIR="${TTYD_START_DIR:-${WORKSPACE}}"
+    echo "ttyd: start directory set to ${TTYD_START_DIR}"
+    
     # Use -W flag to enable writable terminal (fixes readonly issue)
-    nohup /usr/local/bin/ttyd ${AUTH_ARGS} -W -p 7020 bash >"${WORKSPACE}/logs/ttyd.log" 2>&1 &
+    nohup /usr/local/bin/ttyd ${AUTH_ARGS} -W -p 7020 bash -c "cd '${TTYD_START_DIR}' && bash" >${WORKSPACE}/logs/ttyd.log 2>&1 &
     echo "ttyd: started on port 7020 (writable mode)"
     echo "ttyd: log file at ${WORKSPACE}/logs/ttyd.log"
 }
 
-# Main execution if script is run directly
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    start_ttyd
-fi
+# Note: Function is called explicitly from start.sh
+# No auto-execution when sourced to prevent duplicate processes
