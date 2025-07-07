@@ -6,9 +6,16 @@ function start_filebrowser() {
     cd /root
 
     # Update password if provided
-    if [[ ${PASSWORD} ]] && [[ ${PASSWORD} != "admin" ]]; then
+    if [[ ${PASSWORD} ]] && [[ ${PASSWORD} != "admin123" ]]; then
         echo "filebrowser: updating admin password"
-        /usr/local/bin/filebrowser users update admin -p ${PASSWORD}
+        if /usr/local/bin/filebrowser users update admin -p ${PASSWORD}; then
+            echo "filebrowser: password updated successfully"
+        else
+            echo "filebrowser: ERROR - Failed to update password. Check if password meets requirements:"
+            echo "filebrowser: - Must be at least 5 characters long"
+            echo "filebrowser: - Must not be a common password (like 'password', '123456', etc.)"
+            echo "filebrowser: - Keeping default password 'admin123'"
+        fi
     fi
 
     # Start filebrowser in background
