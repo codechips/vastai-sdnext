@@ -96,7 +96,7 @@ COPY scripts/provision/ /opt/provision/
 RUN mkdir -p /opt/bin && \
     chmod +x /opt/bin/start.sh /opt/bin/services/*.sh /opt/provision/provision.py && \
     date -u +"%Y-%m-%dT%H:%M:%SZ" > /root/BUILDTIME.txt && \
-    filebrowser config init && \
+    filebrowser config init --minimum-password-length 5 && \
     filebrowser users add admin admin --perm.admin && \
     # Final cleanup
     apt-get clean && \
